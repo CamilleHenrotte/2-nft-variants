@@ -75,14 +75,10 @@ contract Staking is IERC721Receiver {
         require(stake.timestamp != 0, "NFT is not staked");
 
         uint256 durationInSeconds = block.timestamp - stake.timestamp;
-        uint256 durationInDays = durationInSeconds / 60 / 60 / 24;
-
-        if (durationInDays >= 1) {
-            uint256 tokenAmount = durationInDays * 10 ether;
-            IRewardToken(rewardToken).mint(tokenAmount);
-            emit RewardsMinted(msg.sender, tokenAmount, id);
-            stake.timestamp = block.timestamp;
-        }
+        uint256 tokenAmount = (durationInSeconds * 10 ether) / 60 / 60 / 24;
+        IRewardToken(rewardToken).mint(tokenAmount);
+        emit RewardsMinted(msg.sender, tokenAmount, id);
+        stake.timestamp = block.timestamp;
     }
 
     function getStakeTimestamp(uint256 id) public view returns (uint256) {
